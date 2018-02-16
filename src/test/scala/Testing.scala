@@ -1,12 +1,6 @@
 
-import java.sql.Date
-import java.text.SimpleDateFormat
-import java.util.Locale
-
-import org.apache.spark.sql.catalyst.ScalaReflection
-import org.apache.spark.sql.functions.{col, concat_ws}
+import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
 import org.scalatest.{BeforeAndAfterEach, FunSuite}
 
 
@@ -37,8 +31,8 @@ class Testing extends FunSuite with BeforeAndAfterEach{
 //    ).toDF("ID", "ArraY", "array2")
 //
 
-    import sqlContext.implicits._
     import org.apache.spark.sql.functions._
+    import sqlContext.implicits._
     val dfContentEnvelope = sqlContext.read.format("com.databricks.spark.xml")
       .option("rowTag", "env:ContentEnvelope")
       .load("/home/hadoop/IdeaProjects/AscolSbt/src/test/resources/tt.xml")
@@ -87,8 +81,6 @@ class Testing extends FunSuite with BeforeAndAfterEach{
   test("test") {
     val sqlContext = spark.sqlContext
     val sc = spark.sparkContext
-
-    import sqlContext.implicits._
 
     val df = sqlContext.read.option("delimiter", " ").csv("/home/hadoop/IdeaProjects/AscolSbt/src/test/resources/test.csv")
     df.show(false)

@@ -104,10 +104,7 @@ pivoted.show(false)
     val sqlContext = spark.sqlContext
     val sc = spark.sparkContext
 
-    import org.apache.spark.mllib.linalg.Matrix
-    import org.apache.spark.mllib.linalg.SingularValueDecomposition
-    import org.apache.spark.mllib.linalg.Vector
-    import org.apache.spark.mllib.linalg.Vectors
+    import org.apache.spark.mllib.linalg.{Matrix, SingularValueDecomposition, Vector, Vectors}
     import org.apache.spark.mllib.linalg.distributed.RowMatrix
 
     val data = Array(

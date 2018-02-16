@@ -1,19 +1,14 @@
-import java.util.Scanner
-
-import org.apache.spark.ml.feature.{CountVectorizer, IDF, StopWordsRemover, Tokenizer}
-import org.apache.spark.sql.{DataFrame, Row, SparkSession}
-import edu.stanford.nlp.ling.CoreAnnotations.{LemmaAnnotation, SentencesAnnotation, TokensAnnotation}
-import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
-import edu.stanford.nlp.util.PropertiesUtils
-import edu.stanford.nlp.util.CoreMap
 import java.util.Properties
 
 import breeze.linalg.{DenseMatrix => BDenseMatrix, SparseVector => BSparseVector}
-import org.apache.spark.ml.linalg.Vector
+import edu.stanford.nlp.ling.CoreAnnotations.{LemmaAnnotation, SentencesAnnotation, TokensAnnotation}
+import edu.stanford.nlp.pipeline.{Annotation, StanfordCoreNLP}
+import edu.stanford.nlp.util.CoreMap
+import org.apache.spark.ml.feature.{CountVectorizer, IDF}
+import org.apache.spark.ml.linalg.{Vector => MLVector}
 import org.apache.spark.mllib.linalg.distributed.RowMatrix
 import org.apache.spark.mllib.linalg.{Matrices, Matrix, SingularValueDecomposition, Vectors, Vector => MLLibVector}
-import org.apache.spark.sql.types.{DataTypes, StringType, StructField, StructType}
-import org.apache.spark.ml.linalg.{Vector => MLVector}
+import org.apache.spark.sql.SparkSession
 
 import scala.collection.JavaConversions._
 import scala.collection.Map
@@ -28,8 +23,8 @@ object LSI {
     val spark = SparkSession.builder().appName("test").master("local[*]").getOrCreate()
     val sc = spark.sparkContext
     val sqlContext = spark.sqlContext
-    import sqlContext.implicits._
     import org.apache.spark.sql.functions._
+    import sqlContext.implicits._
 
     val k = if (args.length > 0) args(0).toInt else 90
     val numTerms = if (args.length > 1) args(1).toInt else 20000
