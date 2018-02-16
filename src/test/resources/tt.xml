@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<env:ContentEnvelope xsi:schemaLocation="http">
+    <env:Header>
+        <env:Info>
+            <env:Id>urn:uuid:6d2af93bfbfc49da9805aebb6a38996d</env:Id>
+            <env:TimeStamp>20171122T07:56:09+00:00</env:TimeStamp>
+        </env:Info>
+        <fun:OrgId>18227</fun:OrgId>
+        <fun:DataPartitionId>1</fun:DataPartitionId>
+    </env:Header>
+    <env:Body minVers="0.0" majVers="1" contentSet="Fundamental">
+        <env:ContentItem action="Overwrite">
+            <env:Data xsi:type="sr:FinancialSourceDataItem">
+                <sr:Source sourceId="344" organizationId="4295906830">
+                    <sr:FilingDateTime>20171111T17:00:00+00:00</sr:FilingDateTime>
+                    <sr:SourceTypeCode>10K</sr:SourceTypeCode>
+                    <sr:StatementDate>20171030T00:00:00+00:00</sr:StatementDate>
+                    <sr:IsFilingDateTimeEstimated>false</sr:IsFilingDateTimeEstimated>
+                    <sr:ContainsPreliminaryData>false</sr:ContainsPreliminaryData>
+                    <sr:CapitalChangeAdjustmentDate>20171030T00:00:00+00:00</sr:CapitalChangeAdjustmentDate>
+                    <sr:CumulativeAdjustmentFactor>1.00000</sr:CumulativeAdjustmentFactor>
+                    <sr:ContainsRestatement>false</sr:ContainsRestatement>
+                    <sr:FilingDateTimeUTCOffset>300</sr:FilingDateTimeUTCOffset>
+                    <sr:ThirdPartySourceCode>SS</sr:ThirdPartySourceCode>
+                    <sr:ThirdPartySourcePriority>1</sr:ThirdPartySourcePriority>
+                    <sr:Auditors>
+                        <sr:Auditor auditorId="3541">
+                            <sr:AuditorOpinionCode>UNQ</sr:AuditorOpinionCode>
+                            <sr:IsPlayingAuditorRole>true</sr:IsPlayingAuditorRole>
+                            <sr:IsPlayingTaxAdvisorRole>false</sr:IsPlayingTaxAdvisorRole>
+                            <sr:AuditorEnumerationId>3024068</sr:AuditorEnumerationId>
+                            <sr:AuditorOpinionId>3010546</sr:AuditorOpinionId>
+                            <sr:IsPlayingCSRAuditorRole>false</sr:IsPlayingCSRAuditorRole>
+                        </sr:Auditor>
+                        <sr:Auditor auditorId="9574">
+                            <sr:AuditorOpinionCode>UWE</sr:AuditorOpinionCode>
+                            <sr:IsPlayingAuditorRole>true</sr:IsPlayingAuditorRole>
+                            <sr:IsPlayingTaxAdvisorRole>false</sr:IsPlayingTaxAdvisorRole>
+                            <sr:AuditorEnumerationId>3030421</sr:AuditorEnumerationId>
+                            <sr:AuditorOpinionId>3010547</sr:AuditorOpinionId>
+                            <sr:IsPlayingCSRAuditorRole>false</sr:IsPlayingCSRAuditorRole>
+                        </sr:Auditor>
+                    </sr:Auditors>
+                    <sr:SourceTypeId>3011835</sr:SourceTypeId>
+                    <sr:ThirdPartySourceCodeId>1000716240</sr:ThirdPartySourceCodeId>
+                </sr:Source>
+            </env:Data>
+        </env:ContentItem>
+        <env:ContentItem action="Overwrite">
+        </env:ContentItem>
+    </env:Body>
+</env:ContentEnvelope>

@@ -1,0 +1,9 @@
+Term Term frequency-inverse document frequency frequency
+used in text mining to reflect the importance of a term to a document in the corpus.
+Denote a term by t, a document by d, and the corpus by D. Term frequency TF(t,d) is
+the number of times that term t appears in document d, while document frequency DF(t,D)
+is the number of documents that contains term t. If we only use term frequency to measure
+the importance, it is very easy to over-emphasize terms that appear very often but carry
+little information about the document, e.g., “a”, “the”, and “of”. If a term appears very
+often across the corpus, it means it doesn’t carry special information about a particular document.
+Inverse document frequency is a numerical measure of how much information a term provides:
