@@ -20,7 +20,15 @@ import scala.collection.mutable.ArrayBuffer
 object LSI {
 
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder().appName("test").master("local[*]").getOrCreate()
+    var input = "lsi2/"
+    //    if(args(2).isEmpty){
+    //      println("input is not specified \n default lsi directory will be read")
+    //    }
+    //    else{
+    //      input = args(0)
+    //    }
+
+    val spark = SparkSession.builder().appName("test").getOrCreate()
     val sc = spark.sparkContext
     val sqlContext = spark.sqlContext
     import org.apache.spark.sql.functions._
@@ -30,7 +38,7 @@ object LSI {
     val numTerms = if (args.length > 1) args(1).toInt else 20000
 
     val sentenceData = sqlContext.createDataFrame(
-      sc.wholeTextFiles("/home/hadoop/IdeaProjects/AscolSbt/src/test/resources/machineLearning/")
+      sc.wholeTextFiles(input)
         .map(x => (x._1.substring(x._1.lastIndexOf("/") + 1), x._2.replace("\n", " ")))
     ).toDF("label", "sentence").as[table]
 
@@ -94,28 +102,35 @@ object LSI {
     val mat = new RowMatrix(vecRdd)
     val svd = mat.computeSVD(k, computeU=true)
 
-    println("Singular values: " + svd.s)
-    val topConceptTerms = topTermsInTopConcepts(svd, 10, 10, termIds)
-    val topConceptDocs = topDocsInTopConcepts(svd, 10, 10, docIds)
+    var finalArray = Array.empty[String]
+    finalArray = finalArray :+ "total rows and columns " + mat.numRows() +" * " +mat.numCols()
+    finalArray = finalArray :+ "used reduced k " + k + "top N terms "+ numTerms + "\n"
+    finalArray = finalArray :+ "Singular values: " + svd.s + "\n"
+    val topConceptTerms = topTermsInTopConcepts(svd, 2, 10, termIds)
+    val topConceptDocs = topDocsInTopConcepts(svd, 2, 10, docIds)
     for ((terms, docs) <- topConceptTerms.zip(topConceptDocs)) {
-      println("Concept terms: " + terms.map(_._1).mkString(", "))
-      println("Concept docs: " + docs.map(_._1).mkString(", "))
-      println()
+      finalArray = finalArray :+ "Concept terms: " + terms.map(_._1).mkString(", ")
+      finalArray = finalArray :+ "Concept docs: " + docs.map(_._1).mkString(", ")
     }
 
+    finalArray = finalArray :+ "\n"
+
     val queryEngine = new LSAQueryEngine(svd, termIds, docIds, termIdfs)
-    queryEngine.printTopTermsForTerm("function")
-    queryEngine.printTopTermsForTerm("term")
-    queryEngine.printTopTermsForTerm("information")
+    finalArray = finalArray :+ "toptermsforterm"
+    finalArray = finalArray :+ "crime " + queryEngine.printTopTermsForTerm("crime")
+    finalArray = finalArray :+ "murder " + queryEngine.printTopTermsForTerm("murder")
+    finalArray = finalArray :+ "kill" + queryEngine.printTopTermsForTerm("kill") + "\n"
 
-    queryEngine.printTopDocsForTerm("carry")
-    queryEngine.printTopDocsForTerm("set")
+    finalArray = finalArray :+ "topDocsFor Term "
+    finalArray = finalArray :+ "robbery " + queryEngine.printTopDocsForTerm("robbery")
+    finalArray = finalArray :+ "police " + queryEngine.printTopDocsForTerm("police") + "\n"
 
-    queryEngine.printTopDocsForDoc("test.csv")
-    queryEngine.printTopDocsForDoc("test1.csv")
+    finalArray = finalArray :+ "the_way_we_live " + queryEngine.printTopDocsForDoc("the_way_we_live.txt")
+    finalArray = finalArray :+ "mob_rule_in_new_orleans " + queryEngine.printTopDocsForDoc("mob_rule_in_new_orleans.txt") + "\n"
 
-    queryEngine.printTopDocsForTermQuery(Seq("measure", "term"))
+    finalArray = finalArray :+ "topDocsForTermQuery : prison, kill, destroy" + queryEngine.printTopDocsForTermQuery(Seq("prison", "kill", "destroy"))
 
+    sc.parallelize(finalArray).coalesce(1).saveAsTextFile("lsi2/output")
     sc.stop()
     spark.stop()
 
@@ -284,25 +299,25 @@ class LSAQueryEngine(
     allDocWeights.top(10)
   }
 
-  def printTopTermsForTerm(term: String): Unit = {
+  def printTopTermsForTerm(term: String): String = {
     val idWeights = topTermsForTerm(idTerms(term))
-    println(idWeights.map { case (score, id) => (termIds(id), score) }.mkString(", "))
+    idWeights.map { case (score, id) => (termIds(id), score) }.mkString(", ")
   }
 
-  def printTopDocsForDoc(doc: String): Unit = {
+  def printTopDocsForDoc(doc: String): String = {
     val idWeights = topDocsForDoc(idDocs(doc))
-    println(idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", "))
+    idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", ")
   }
 
-  def printTopDocsForTerm(term: String): Unit = {
+  def printTopDocsForTerm(term: String): String = {
     val idWeights = topDocsForTerm(idTerms(term))
-    println(idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", "))
+    idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", ")
   }
 
-  def printTopDocsForTermQuery(terms: Seq[String]): Unit = {
+  def printTopDocsForTermQuery(terms: Seq[String]): String = {
     val queryVec = termsToQueryVector(terms)
     val idWeights = topDocsForTermQuery(queryVec)
-    println(idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", "))
+    idWeights.map { case (score, id) => (docIds(id), score) }.mkString(", ")
   }
 }
 
