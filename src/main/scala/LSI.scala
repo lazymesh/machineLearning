@@ -20,13 +20,12 @@ import scala.collection.mutable.ArrayBuffer
 object LSI {
 
   def main(args: Array[String]): Unit = {
-    var input = "lsi2/"
-    //    if(args(2).isEmpty){
-    //      println("input is not specified \n default lsi directory will be read")
-    //    }
-    //    else{
-    //      input = args(0)
-    //    }
+    if(args(0).isEmpty){
+      println("input is not specified \n default lsi directory will be read")
+      System.exit(1)
+    }
+    val input = args(0)
+
 
     val spark = SparkSession.builder().appName("test").getOrCreate()
     val sc = spark.sparkContext
@@ -34,8 +33,8 @@ object LSI {
     import org.apache.spark.sql.functions._
     import sqlContext.implicits._
 
-    val k = if (args.length > 0) args(0).toInt else 90
-    val numTerms = if (args.length > 1) args(1).toInt else 20000
+    val k = if (!args(1).isEmpty) args(0).toInt else 90
+    val numTerms = if (!args(2).isEmpty) args(2).toInt else 20000
 
     val sentenceData = sqlContext.createDataFrame(
       sc.wholeTextFiles(input)
