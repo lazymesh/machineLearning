@@ -33,7 +33,7 @@ object LSI {
     import org.apache.spark.sql.functions._
     import sqlContext.implicits._
 
-    val k = if (!args(1).isEmpty) args(0).toInt else 90
+    val k = if (!args(1).isEmpty) args(1).toInt else 90
     val numTerms = if (!args(2).isEmpty) args(2).toInt else 20000
 
     val sentenceData = sqlContext.createDataFrame(
