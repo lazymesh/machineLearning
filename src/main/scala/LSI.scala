@@ -41,13 +41,11 @@ object LSI {
         .map(x => (x._1.substring(x._1.lastIndexOf("/") + 1), x._2.replace("\n", " ")))
     ).toDF("label", "sentence").as[table]
 
-    val lemmatized = sentenceData.mapPartitions { it => //it.map{row => row}}
+    val lemmatized = sentenceData.mapPartitions { it => //annotation and annotators are applied
 
       val props = new Properties()
       props.put("annotators", "tokenize, ssplit, pos, lemma")
-      //    props.put("pos.model", "edu/stanford/nlp/models/pos-tagger/english-left3words/english-left3words-distsim.tagger");
       val pipeline = new StanfordCoreNLP(props)
-      //
       it.map { row =>
         val text = row.sentence
         val doc = new Annotation(text)
@@ -56,8 +54,7 @@ object LSI {
         val lemmas = new ArrayBuffer[String]()
         val sentences: java.util.List[CoreMap] = doc.get(classOf[SentencesAnnotation])
 
-        for (sentence <- sentences;
-             token <- sentence.get(classOf[TokensAnnotation])) {
+        for (sentence <- sentences; token <- sentence.get(classOf[TokensAnnotation])) {
           val lemma = token.get(classOf[LemmaAnnotation])
           if (lemma.length > 2 && isOnlyLetters(lemma)) {
             lemmas += lemma.toLowerCase
@@ -105,8 +102,10 @@ object LSI {
     finalArray = finalArray :+ "total rows and columns " + mat.numRows() +" * " +mat.numCols()
     finalArray = finalArray :+ "used reduced k " + k + "top N terms "+ numTerms + "\n"
     finalArray = finalArray :+ "Singular values: " + svd.s + "\n"
-    val topConceptTerms = topTermsInTopConcepts(svd, 2, 10, termIds)
-    val topConceptDocs = topDocsInTopConcepts(svd, 2, 10, docIds)
+    finalArray = finalArray :+ "right singular : col " + svd.V.numCols + " rows " + svd.V.numRows + "\n"
+    finalArray = finalArray :+ "left singular : col " + svd.U.numCols + " rows " + svd.U.numRows + "\n"
+    val topConceptTerms = topTermsInTopConcepts(svd, 3, 4, termIds)
+    val topConceptDocs = topDocsInTopConcepts(svd, 3, 4, docIds)
     for ((terms, docs) <- topConceptTerms.zip(topConceptDocs)) {
       finalArray = finalArray :+ "Concept terms: " + terms.map(_._1).mkString(", ")
       finalArray = finalArray :+ "Concept docs: " + docs.map(_._1).mkString(", ")
